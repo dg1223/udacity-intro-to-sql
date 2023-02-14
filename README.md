@@ -1,6 +1,6 @@
 # Udacity: Introduction to SQL
 
-## From basic to advanced SQL comcepts
+## From basic to advanced SQL concepts
 
 ### Contents
 
