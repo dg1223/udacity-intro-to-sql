@@ -1,5 +1,5 @@
 
-    Provide the name of the sales_rep in each region with the largest amount of total_amt_usd sales.
+--Provide the name of the sales_rep in each region with the largest amount of total_amt_usd sales.
 
 -- My solution 1
 WITH region_max_cte AS (
@@ -20,7 +20,7 @@ JOIN orders o ON o.account_id = a.id
 JOIN region_max_cte m ON m.id = r.id AND m.amount = o.total_amt_usd
 
 
-    For the region with the largest (sum) of sales total_amt_usd, how many total (count) orders were placed?
+--For the region with the largest (sum) of sales total_amt_usd, how many total (count) orders were placed?
 
 -- My solution 2
 WITH region_max_cte AS (
@@ -113,7 +113,7 @@ FROM t2
 
 
 
-    For the customer that spent the most (in total over their lifetime as a customer) total_amt_usd, how many web_events did they have for each channel?
+--For the customer that spent the most (in total over their lifetime as a customer) total_amt_usd, how many web_events did they have for each channel?
 
 -- My solution 4 v1
 SELECT  t2.name,
@@ -211,6 +211,8 @@ SELECT  t2.name,
 FROM t2
 ORDER BY t2.num_events DESC
 
+/* WITH clause construct
+------------------------
 WITH t1 AS (
 
 ),
@@ -222,9 +224,10 @@ WHERE / HAVING ... [=, <, >] (SELECT t1.[] FROM t1)
 SELECT
 FROM
 ORDER BY
+-------------------------
+*/
 
-
-    What is the lifetime average amount spent in terms of total_amt_usd for the top 10 total spending accounts?
+--What is the lifetime average amount spent in terms of total_amt_usd for the top 10 total spending accounts?
 
 -- My solution 5
 SELECT ROUND(AVG(t1.total_spent), 2) avg_spent
@@ -256,7 +259,7 @@ ORDER BY avg_spent DESC
 
 
 
-    What is the lifetime average amount spent in terms of total_amt_usd, including only the companies that spent more per order, on average, than the average of all orders?
+--What is the lifetime average amount spent in terms of total_amt_usd, including only the companies that spent more per order, on average, than the average of all orders?
 
 -- My solution 6 v1
 SELECT ROUND(AVG(t2.avg_spent), 2) avg_spent

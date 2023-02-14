@@ -1,11 +1,14 @@
-region      4
+/* region   4
 sales_reps  50
 accounts    351
 orders      6912
 web_events  9073
+*/
 
+/*
 1. Provide the name of the sales_rep in each region with the largest amount of total_amt_usd sales
 >> Provide the name of the sales_rep in each region with the largest amount of [] sales
+
 
 Trickle down effect
 -------------------
@@ -15,6 +18,7 @@ One account   can have multiple orders
 > One sales rep can have multiple orders
 >> One region can have  multiple orders for each sales rep
 >>> GROUP BY will show the results for the most granular element
+*/
 
 SELECT 	name,
 		region_name,
@@ -37,8 +41,10 @@ GROUP BY 1, 2, 3
 WHERE rank = 1
 ORDER BY max_sales DESC
 
+/*
 1.5 Provide the name of the sales_rep in each region with the largest amount of total total_amt_usd sales
 >> Provide the name of the sales_rep in each region with the largest amount of total [] sales
+*/
 
 SELECT 	name,
 		region_name,
@@ -61,7 +67,9 @@ GROUP BY 1, 2, 3
 WHERE rank = 1
 ORDER BY max_of_sum_of_sales DESC
 
-1.5 Without RANK() >> absolutely horrible; zero readability
+/*
+1.5 Without RANK() >> zero readability
+*/
 
 WITH t1 AS (
   SELECT  r.id,
@@ -99,9 +107,10 @@ FROM t2
 JOIN t1 ON t1.id = t2.s_region_id AND 
 	 t1.sum_of_sales = t2.max_sum_of_sales
 
-
+/*
 2. For the region with the largest (sum) of sales total_amt_usd, how many total (count) orders were placed? 
 >> For the region with the largest sum of sales, how many orders were placed in total? 
+*/
 
 WITH t1 AS
 (
@@ -133,9 +142,10 @@ HAVING r.name = t1.name
 ORDER BY total_orders DESC
 LIMIT 1
 
-
+/*
 3. How many accounts had more total purchases than the account name which has bought the most 
 standard_qty paper throughout their lifetime as a customer?
+*/
 
 -- Doesn't account for ties
 WITH t1 AS
@@ -165,7 +175,7 @@ SELECT COUNT(t2.name)
 FROM t2
 JOIN t1 ON t2.total_purchase > t1.total_purchase
 
--- Account for ties
+-- Accounts for ties
 WITH t1 AS
 (
   WITH t AS
@@ -233,14 +243,15 @@ SELECT	id, name, total_purchase
 FROM tt
 WHERE rank = 1
 
-
-
-
+/*
 4. For the customer that spent the most (in total over their lifetime as a customer) total_amt_usd, 
 how many web_events did they have for each channel?
 >> For the customer that spent the most, how many web_events did they have for each channel?
+*/
 
 -- Find the customer that spent the most; account for ties
+
+-- Using subqueries
 SELECT id, name, total_spent
 FROM 
 (
@@ -261,7 +272,7 @@ FROM
 ) t2
 WHERE rank = 1
 
-
+-- using WITH
 WITH t1 AS
 (
   SELECT  a.id,
@@ -284,8 +295,8 @@ FROM t1
 SELECT id, name, total_spent
 FROM t2
 WHERE rank = 1
------------------
 
+-- full solution
 WITH top_customer AS
 (
   WITH t1 AS
@@ -320,10 +331,14 @@ FROM top_customer t
 JOIN web_events w ON w.account_id = t.id
 GROUP BY 1, 2, 3
 
+/*
 5. What is the lifetime average amount spent in terms of total_amt_usd for the top 10 total spending accounts?
 >> Ambiguous question
+*/
 
-5.1 Avg spent for each account in the top 10 list
+
+-- 5.1 Avg spent for each account in the top 10 list
+
 -- account for ties
 WITH t1 AS
 (
@@ -348,9 +363,7 @@ SELECT id, name, avg_spent
 FROM t2
 WHERE rank <= 10
 
-
-
-5.2 Avg spent by the top 10 account in the list
+--5.2 Avg spent by the top 10 account in the list
 WITH t1 AS
 (
   SELECT  a.id,
@@ -374,9 +387,11 @@ SELECT AVG(total_spent)
 FROM t2
 WHERE rank <= 10
 
+/*
 6. What is the lifetime average amount spent in terms of total_amt_usd, including only the companies 
 that spent more per order, on average, than the average of all orders?
 >> This is the triple average mashup
+*/
 
 WITH t1 AS
 (
