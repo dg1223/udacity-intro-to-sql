@@ -1,4 +1,5 @@
-/* region   4
+/* 
+region      4
 sales_reps  50
 accounts    351
 orders      6912
@@ -175,7 +176,7 @@ SELECT COUNT(t2.name)
 FROM t2
 JOIN t1 ON t2.total_purchase > t1.total_purchase
 
--- Accounts for ties
+-- Accounts for ties (will fail if t1 has more than 1 row)
 WITH t1 AS
 (
   WITH t AS
@@ -296,7 +297,7 @@ SELECT id, name, total_spent
 FROM t2
 WHERE rank = 1
 
--- full solution
+-- full solution (will fail if t1 has more than 1 row)
 WITH top_customer AS
 (
   WITH t1 AS
@@ -363,7 +364,17 @@ SELECT id, name, avg_spent
 FROM t2
 WHERE rank <= 10
 
---5.2 Avg spent by the top 10 account in the list
+-- the query below is the same -_- --
+SELECT	a.id,
+        a.name,
+        AVG(o.total_amt_usd) avg_spent
+FROM accounts a
+JOIN orders o ON o.account_id = a.id
+GROUP BY 1, 2
+ORDER BY avg_spent DESC
+LIMIT 10
+
+--5.2 Avg spent by the top 10 account in the list (makes more sense) 304846.969
 WITH t1 AS
 (
   SELECT  a.id,
@@ -387,10 +398,26 @@ SELECT AVG(total_spent)
 FROM t2
 WHERE rank <= 10
 
+-- the query below is the same -_-, much simpler --
+WITH t1 AS
+(
+  SELECT a.id,
+         a.name,
+         SUM(o.total_amt_usd) total_spent
+  FROM accounts a
+  JOIN orders o ON o.account_id = a.id
+  GROUP BY 1, 2
+  ORDER BY total_spent DESC
+  LIMIT 10
+)
+
+SELECT AVG(total_spent)
+FROM t1
+
 /*
 6. What is the lifetime average amount spent in terms of total_amt_usd, including only the companies 
 that spent more per order, on average, than the average of all orders?
->> This is the triple average mashup
+>> This is a triple average mashup
 */
 
 WITH t1 AS
